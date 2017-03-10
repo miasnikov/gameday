@@ -64,7 +64,7 @@ def process_message(msg):
     # store this part of the message in the dynamodb table
     table.put_item(
         Item={
-            'msg_id': msg_id,
+            'messageid': msg_id,
             'part_number': part_number,
             'data': data
         },
