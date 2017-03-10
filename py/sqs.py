@@ -84,22 +84,25 @@ def check_messages(msg_id):
     db_messages = table.query(KeyConditionExpression=Key('messageid').eq(msg_id))
     # check if both parts exist
     if db_messages["Count"] == 2:
-        # app.logger.debug("got a complete message for %s" % msg_id)
-        logging.info("Have both parts for msg_id={}".format(msg_id))
-        # We can build the final message.
-        result = db_messages["Items"][0]["data"] + db_messages["Items"][1]["data"]
-        logging.debug("Assembled message: {}".format(result))
-        # sending the response to the score calculator
-        # format:
-        #   url -> api_base/jFgwN4GvTB1D2QiQsQ8GHwQUbbIJBS6r7ko9RVthXCJqAiobMsLRmsuwZRQTlOEW
-        #   headers -> x-gameday-token = API_token
-        #   data -> EaXA2G8cVTj1LGuRgv8ZhaGMLpJN2IKBwC5eYzAPNlJwkN4Qu1DIaI3H1zyUdf1H5NITR
-        url = API_BASE + '/' + msg_id
-        logging.debug("Making request to {} with payload {}".format(url, result))
-        req = urllib2.Request(url, data=result, headers={'x-gameday-token':API_TOKEN})
-        resp = urllib2.urlopen(req)
-        logging.debug("Response from server: {}".format(resp.read()))
-        resp.close()
+		try:
+			# app.logger.debug("got a complete message for %s" % msg_id)
+			logging.info("Have both parts for msg_id={}".format(msg_id))
+			# We can build the final message.
+			result = db_messages["Items"][0]["data"] + db_messages["Items"][1]["data"]
+			logging.debug("Assembled message: {}".format(result))
+			# sending the response to the score calculator
+			# format:
+			#   url -> api_base/jFgwN4GvTB1D2QiQsQ8GHwQUbbIJBS6r7ko9RVthXCJqAiobMsLRmsuwZRQTlOEW
+			#   headers -> x-gameday-token = API_token
+			#   data -> EaXA2G8cVTj1LGuRgv8ZhaGMLpJN2IKBwC5eYzAPNlJwkN4Qu1DIaI3H1zyUdf1H5NITR
+			url = API_BASE + '/' + msg_id
+			logging.debug("Making request to {} with payload {}".format(url, result))
+			req = urllib2.Request(url, data=result, headers={'x-gameday-token':API_TOKEN})
+			resp = urllib2.urlopen(req)
+			logging.debug("Response from server: {}".format(resp.read()))
+			resp.close()
+		except Exception, e:
+			logging.warning("404 for messageid={}, part_number={}".format(msg_id, part_number))
 
 if __name__ == "__main__":
     server()
