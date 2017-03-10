@@ -63,14 +63,14 @@ def process_message(msg):
 
     try:
     	# store this part of the message in the dynamodb table
-    	table.put_item(
+        table.put_item(
        		Item={
        		    'messageid': msg_id,
         	    'part_number': part_number,
 				'data': data
 			},
 			ConditionExpression='attribute_not_exists(messageid, part_number)');
-	except Exception, e:
+    except Exception, e:
 		logging.warning("Duplicate for messageid={}, part_number={}".format(msg_id, part_number))
 
     # try to get the parts of the message from the dynamodb table
