@@ -102,7 +102,7 @@ def check_messages(msg_id):
 			logging.debug("Response from server: {}".format(resp.read()))
 			resp.close()
 		except Exception, e:
-			logging.warning("404 for messageid={}, part_number={}".format(msg_id, part_number))
+			logging.warning("404 for messageid={}".format(msg_id))
 
 if __name__ == "__main__":
     server()
