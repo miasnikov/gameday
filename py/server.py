@@ -68,15 +68,15 @@ def process_message(msg):
             'part_number': part_number,
             'data': data
         },
-        ConditionExpression='attribute_not_exists(msg_id)')
+        ConditionExpression='attribute_not_exists(messageid)')
 
     # try to get the parts of the message from the dynamodb table
-    db_messages = table.query(KeyConditionExpression=Key('msg_id').eq(msg_id))
+    db_messages = table.query(KeyConditionExpression=Key('messageid').eq(msg_id))
 
     # if we have both parts, the message is complete
     if db_messages["Count"] == msg_total:
         # app.logger.debug("got a complete message for %s" % msg_id)
-        logging.info("Have all parts for msg_id={}".format(msg_id))
+        logging.info("Have all parts for messageid={}".format(msg_id))
         # We can build the final message.
 	result = ""
 	for i in range(len(db_messages["Items"])):
