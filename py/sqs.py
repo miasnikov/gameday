@@ -43,6 +43,7 @@ def server():
             msg_id = body['Id']
             part_number = body['PartNumber']
             data = body['Data']
+			msg_total = body['TotalParts']
             # process message
             logging.info("Body: {}".format(body))
             # put the part received into dynamo
@@ -55,7 +56,7 @@ def server():
                 logging.info("skipping duplicate message")
                 continue
             # try to get the parts of the message from the Dynamo.
-            check_messages(msg_id)
+            check_messages(msg_id, msg_total)
 
 def store_message(msg_id, part_number, data):
     """
@@ -76,19 +77,21 @@ def store_message(msg_id, part_number, data):
         # and lose cash moneys
         return False
 
-def check_messages(msg_id):
+def check_messages(msg_id, msg_total):
     """
     checking to see in dynamo if we have the part already
     """
     # do a get item from dynamo to see if item exists
     db_messages = table.query(KeyConditionExpression=Key('messageid').eq(msg_id))
     # check if both parts exist
-    if db_messages["Count"] == 2:
+    if db_messages["Count"] == msg_total:
 		try:
 			# app.logger.debug("got a complete message for %s" % msg_id)
 			logging.info("Have both parts for msg_id={}".format(msg_id))
 			# We can build the final message.
-			result = db_messages["Items"][0]["data"] + db_messages["Items"][1]["data"]
+			result = ""
+			for i in range(len(db_messages["Items"])):
+				result = result + db_messages["Items"][i]["data"]
 			logging.debug("Assembled message: {}".format(result))
 			# sending the response to the score calculator
 			# format:
@@ -101,6 +104,7 @@ def check_messages(msg_id):
 			resp = urllib2.urlopen(req)
 			logging.debug("Response from server: {}".format(resp.read()))
 			resp.close()
+			logging.info("Wwwwwwwwweeeeeeeeeeeeeeeeeeeeeeeee!!!!!")
 		except Exception, e:
 			logging.warning("404 for messageid={}".format(msg_id))
 
