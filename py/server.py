@@ -70,7 +70,7 @@ def process_message(msg):
 				'data': data
 			},
 			ConditionExpression='attribute_not_exists(messageid, part_number)');
-	except:
+	except ClientError as e:
 		logging.warning("Duplicate for messageid={}, part_number={}".format(msg_id, part_number))
 
     # try to get the parts of the message from the dynamodb table
