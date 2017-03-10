@@ -26,7 +26,7 @@ if DYNAMO_TABLE is None:
 
 app = Flask(__name__)
 
-dynamodb = boto3.resource('dynamodb')
+dynamodb = boto3.resource('dynamodb', region_name = 'us-west-2')
 table = dynamodb.Table(DYNAMO_TABLE)
 
 # creating flask route for type argument
